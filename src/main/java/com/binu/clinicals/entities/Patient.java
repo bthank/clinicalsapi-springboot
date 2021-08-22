@@ -1,9 +1,14 @@
 package com.binu.clinicals.entities;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Patient {
@@ -14,6 +19,10 @@ public class Patient {
 	private String firstName;
 	private String lastName;
 	private int age;
+	
+	// this one to many mapping is done from the patient side
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER,mappedBy="patient")
+	private List<ClinicalData> clinicalData;
 
 	public int getId() {
 		return id;
