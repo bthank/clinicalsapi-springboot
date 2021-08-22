@@ -3,6 +3,7 @@ package com.binu.clinicals.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,20 @@ public class PatientController {
 		
 		return patientRepository.findAll();
 		
+	}
+	
+	
+	@RequestMapping(value="/patients/{id}")
+	public Patient getPatient(@PathVariable("id") int id) {
+		
+		return patientRepository.findById(id).get();
+	
+	}
+	
+	@RequestMapping(value="/patients",method=RequestMethod.POST)
+	public Patient savePatient(Patient patient) {
+		
+		return patientRepository.save(patient);
 	}
 	
 	
