@@ -1,8 +1,10 @@
 package com.binu.clinicals.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +16,11 @@ import com.binu.clinicals.entities.ClinicalData;
 import com.binu.clinicals.entities.Patient;
 import com.binu.clinicals.repositories.ClinicalDataRepository;
 import com.binu.clinicals.repositories.PatientRepository;
+import com.binu.clinicals.utility.BMICalculator;
 
 @RestController
 @RequestMapping(value = "/api")
+@CrossOrigin
 public class ClinicalDataController {
 	
 	private ClinicalDataRepository clinicalDataRepository;
@@ -50,9 +54,21 @@ public class ClinicalDataController {
 	@RequestMapping(value="/clinicals/{patientId}/{componentName}", method=RequestMethod.GET)
 	public List<ClinicalData> getClinicalData(@PathVariable("patientId") int patientId, @PathVariable("componentName") String componentName) {
 		
-		List<ClinicalData> clinicalData = clinicalDataRepository.findByPatientIdAndComponentNameOrderByMeasuredDateTime(patientId,componentName);
+		if (componentName.equals("bmi")) {
+			// need to make this change to componentName so that "hw" can be used in the findByPatientIdAndComponentNameOrderByMeasuredDateTime query
+			// to retrieve height/weight records in order to comput BMI
+			// Note that BMI does not exist in the database.  It is only for the UI.
+			componentName = "hw";
+		}
 		
-		return null;
+		List<ClinicalData> clinicalData = clinicalDataRepository.findByPatientIdAndComponentNameOrderByMeasuredDateTime(patientId,componentName);
+		List<ClinicalData> duplicateClinicalData = new ArrayList<>(clinicalData);
+		for(ClinicalData eachEntry: duplicateClinicalData) {
+			
+			BMICalculator.calculateBMI(clinicalData, eachEntry);
+		}
+
+		return clinicalData;
 	}
 	
 	
