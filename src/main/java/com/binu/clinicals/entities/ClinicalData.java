@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="clinicaldata")
 public class ClinicalData {
@@ -24,6 +26,7 @@ public class ClinicalData {
 
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="patient_id",nullable=false)
+	@JsonIgnore // use this annotation in order to prevent an infinite loop during serialization
 	private Patient patient;
 
 	public int getId() {
